@@ -3,9 +3,9 @@ name: CI Pipeline
 # 1. Trigger: When the workflow should run
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" , "release/dev"]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main" , "release/dev"]
 
 # 2. Jobs: Group of tasks that run on a virtual machine
 jobs:
