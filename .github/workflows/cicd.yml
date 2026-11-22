@@ -39,19 +39,19 @@ jobs:
     steps:
       - name: Deploy and restart service via SSH
         uses: appleboy/ssh-action@v1.0.3
-        # with:
-        #   host: ${{ secrets.EC2_HOST }}
-        #   username: ${{ secrets.EC2_USER }} # e.g., ubuntu or ec2-user
-        #   key: ${{ secrets.EC2_SSH_KEY }}
-        #   script: |
-        #     cd /var/www/your-python-app
-        #     git pull origin main
-        #     source venv/bin/activate
-        #     pip install -r requirements.txt
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }} # e.g., ubuntu or ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /var/www/your-python-app
+            git pull origin main
+            source venv/bin/activate
+            pip install -r requirements.txt
             
-        #     # Uncomment if using Django:
-        #     # python manage.py migrate --noinput
-        #     # python manage.py collectstatic --noinput
+            # Uncomment if using Django:
+            # python manage.py migrate --noinput
+            # python manage.py collectstatic --noinput
             
-        #     # Restart your app server (Gunicorn / Uvicorn / Systemd)
-        #     sudo systemctl restart your-app-service
+            # Restart your app server (Gunicorn / Uvicorn / Systemd)
+            sudo systemctl restart your-app-service
