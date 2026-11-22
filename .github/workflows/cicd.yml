@@ -1,1 +1,25 @@
+name: CI Pipeline
+
+# 1. Trigger: When the workflow should run
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# 2. Jobs: Group of tasks that run on a virtual machine
+jobs:
+  build-and-test:
+    # 3. Runner: The OS environment for the job
+    runs-on: ubuntu-latest
+
+    # 4. Steps: Sequential commands or pre-built actions
+    steps:
+      # Checks out your repository code so the workflow can access it
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Runs a shell command
+      - name: Run a test script
+        run: echo "Hello, GitHub Actions!"
 
