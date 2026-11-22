@@ -1,25 +1,57 @@
-name: CI Pipeline
+name: Build and Deploy Python App to AWS
 
-# 1. Trigger: When the workflow should run
 on:
   push:
-    branches: [ "main" , "release/dev"]
+    branches: [ "main", "release/dev" ]
   pull_request:
-    branches: [ "main" , "release/dev"]
+    branches: [ "main", "release/dev"]
 
-# 2. Jobs: Group of tasks that run on a virtual machine
 jobs:
+  # JOB 1: Install Dependencies & Run Tests
   build-and-test:
-    # 3. Runner: The OS environment for the job
     runs-on: ubuntu-latest
-
-    # 4. Steps: Sequential commands or pre-built actions
     steps:
-      # Checks out your repository code so the workflow can access it
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Runs a shell command
-      - name: Run a test script
-        run: echo "Hello, GitHub Actions!"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
 
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          # Uncomment the command matching your framework:
+          pytest
+          # python manage.py test
+
+  # JOB 2: Deploy to AWS EC2
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test # Deploys only if tests pass
+
+    steps:
+      - name: Deploy and restart service via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }} # e.g., ubuntu or ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /var/www/your-python-app
+            git pull origin main
+            source venv/bin/activate
+            pip install -r requirements.txt
+            
+            # Uncomment if using Django:
+            # python manage.py migrate --noinput
+            # python manage.py collectstatic --noinput
+            
+            # Restart your app server (Gunicorn / Uvicorn / Systemd)
+            sudo systemctl restart your-app-service
